@@ -35,16 +35,16 @@ The server will run at http://localhost:8000
 ## Design Samples
 ----
 #### Login Page
-![Login Page](https://github.com/pothalaravi/todo/blob/main/sampleImages/login.png?raw=true)
+![Login Page](https://github.com/pothalaravi/todo/blob/main/sampleImages/login_final.png?raw=true)
 
 #### Registration Page
-![Registration Page](https://github.com/pothalaravi/todo/blob/main/sampleImages/register.png?raw=true)
+![Registration Page](https://github.com/pothalaravi/todo/blob/main/sampleImages/register_final.png?raw=true)
 
 #### Dashboard Page
 ![Dashboard Page](https://github.com/pothalaravi/todo/blob/main/sampleImages/dashboard.png?raw=true)
 
 #### Add ToDo
-![Add ToDo](https://github.com/pothalaravi/todo/blob/main/sampleImages/addtask.png?raw=true)
+![Add ToDo](https://github.com/pothalaravi/todo/blob/main/sampleImages/addtask_final.png?raw=true)
 
 #### ToDo Overview Page
 ![ToDo Overview Page](https://github.com/pothalaravi/todo/blob/main/sampleImages/taskview.png?raw=true)
