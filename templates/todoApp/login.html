@@ -26,7 +26,7 @@
         background-repeat: no-repeat;
         font-family: 'Roboto', sans-serif !important;
         overflow-x: hidden;
-        overflow-y: hidden;
+        height: 100vh !important;
         font-size: 16px;
     }
 
@@ -41,6 +41,12 @@
         /* display: flex; */
         padding: 30px;
     }
+
+    @media only screen and (max-width: 900px) {
+        #login_container{
+            width: 90%;
+        }
+      }
 
     .navbar-container{
         margin: 10px;
@@ -69,7 +75,7 @@
             <div class="col12">
                 <div class="navitems" style="padding-left: 10px; padding-right: 10px; padding-top: 5px;">
                     <div class="row">
-                        <div class="col-4" id="brand_name">
+                        <div class="col-12" id="brand_name">
                             <h4>ToDo App</h4>
                         </div>
                     </div>
@@ -90,8 +96,8 @@
             {% csrf_token %}
             <div class="container">
                 <div class="row">
-                    <div class="col-3"></div>
-                    <div class="col-6">
+                    <div class="col-0 col-sm-3"></div>
+                    <div class="col-12 col-sm-6">
                         <div class="form-floating mb-3">
                             <input type="text" class="form-control" id="id_username" name="username" placeholder="demo">
                             <label for="id_username">Username</label>
@@ -99,8 +105,8 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-3"></div>
-                    <div class="col-6">
+                    <div class="col-0 col-sm-3"></div>
+                    <div class="col-12 col-sm-6">
                         <div class="form-floating mb-3">
                             <input type="password" class="form-control" id="id_password" name="password">
                             <label for="id_password">password</label>
@@ -108,16 +114,16 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-4"></div>
-                    <div class="col-4">
+                    <div class="col-0 col-sm-4"></div>
+                    <div class="col-12 col-sm-4">
                         <button type="submit" style="width: 100% !important;" class="btn btn-outline-success">
                             <i class="fa fa-chevron-right" aria-hidden="true"></i> Login
                         </button>
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-4"></div>
-                    <div class="col-4">
+                    <div class="col-0 col-sm-4"></div>
+                    <div class="col-12 col-sm-4">
                         <p>Don't Have Accout, <a href="/register">Register Here !</a></p>
                     </div>
                 </div>
