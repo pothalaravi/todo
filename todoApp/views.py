@@ -71,15 +71,25 @@ class TaskDetail(LoginRequiredMixin,DetailView):
     templates_name="todoApp/task_detail.html"
 
 
-class TaskCreate(SweetifySuccessMixin, LoginRequiredMixin,CreateView):
-    model = Task
-    fields=['title','description','completed', 'task_date', 'category']
-    success_message = "Task Added Successfully .!"
-    success_url = reverse_lazy('task')
+class TaskCreate(TemplateView, LoginRequiredMixin):
     
-    def form_valid(self,form):
-        form.instance.user=self.request.user
-        return super(TaskCreate,self).form_valid(form)
+    def post(self, request, *args, **kwargs):
+        try:
+            data = request.POST
+            if 'title' not in data or 'description' not in data:
+                sweetify.error("Title and Description fields are manditory.!")
+            else:
+                Task.objects.create(
+                    user = request.user,
+                    title = data['title'],
+                    category = 'others' if data['category'] == '' else data['category'],
+                    description = data['description'],
+                    task_date = None if data['task_date'] == '' else data['task_date'],
+                )
+                sweetify.success(request, "ToDo Added Successfully.!")
+        except Exception as err:
+            sweetify.error(request, "Error Occured Please try Again Later.!")
+        return redirect('task')
     
 class TaskUpdate(LoginRequiredMixin, TemplateView):
     
@@ -141,7 +151,6 @@ class CustomLoginView(LoginView):
         else:
             sweetify.error(request, "Wrong Credentials..!")
             return redirect('login')
-        
         
     
 class RegisterPage(FormView):
