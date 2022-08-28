@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+{% load static %}
+{% load django_bootstrap5 %}
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+
+
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Tangerine">
+    <script src="https://use.fontawesome.com/37cc65afcd.js"></script>
+    <title>ToDo | Task List</title>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Popperjs -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"
+    crossorigin="anonymous"></script>
+    <!-- Tempus Dominus JavaScript -->
+    <script src="https://cdn.jsdelivr.net/gh/Eonasdan/tempus-dominus@master/dist/js/tempus-dominus.js"
+    crossorigin="anonymous"></script>
+    <!-- Tempus Dominus Styles -->
+    <link href="https://cdn.jsdelivr.net/gh/Eonasdan/tempus-dominus@master/dist/css/tempus-dominus.css"
+    rel="stylesheet" crossorigin="anonymous">
+    {% load sweetify %}
+</head>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Monoton&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+    body{
+        background-image: url("{% static 'todo_bg2.jpg' %}");
+        background-size: cover;
+        background-repeat: no-repeat;
+        font-family: 'Roboto', sans-serif !important;
+        overflow-x: hidden;
+        overflow-y: hidden;
+    }
+
+    #tasks_container::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+    #tasks_container::-webkit-scrollbar-track {
+        background-clip: content-box;
+        border: 2px solid transparent;
+    }
+    #tasks_container::-webkit-scrollbar-thumb {
+        background-color: teal;
+        border-radius: 7px;
+    }
+    #tasks_container::-webkit-scrollbar-thumb:hover {
+        background-color: rgb(2, 88, 88);
+    }
+    #tasks_container::-webkit-scrollbar-corner, #tasks_container::-webkit-scrollbar-track {
+        background-color: #b0b7c4;
+    }
+
+    #list_container{
+        margin-top: 4%;
+        background: white;
+        min-height: 70vh;
+        width: 60%;
+        background: linear-gradient( to right bottom, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.3) );
+        border-radius: 7px;
+        backdrop-filter: blur(0.4rem);
+        /* display: flex; */
+        padding: 30px;
+    }
+    .modal-content{
+        background: white;
+        background: linear-gradient( to right bottom, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.3) );
+        border-radius: 7px;
+        backdrop-filter: blur(0.4rem);
+        /* display: flex; */
+        padding: 30px;
+    }
+
+    .navbar-container{
+        margin: 10px;
+        border-radius: 7px;
+        background: white;
+        background: linear-gradient( to right bottom, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.3) );
+        backdrop-filter: blur(0.4rem);
+    }
+
+    #logout_btn{
+        text-decoration: none;
+        color: tomato;
+        line-height: 27px;
+        font-family: 'Roboto', sans-serif;
+    }
+
+    #logout_btn:hover{
+        color: red;
+    }
+
+    #brand_name{
+        font-family: 'Monoton', cursive;
+        text-shadow: 4px 4px 4px #aaa;
+        font-weight: bold;
+    }
+
+    #tasks_container{
+        padding-left: 10%;
+        padding-right: 10%;
+        height: 50vh;
+        overflow-y: auto;
+    }
+
+    .task_container{
+        background-color: white;
+        border-radius: 7px;
+        margin-bottom: 10px;
+        line-height: 50px;
+    }
+
+    .fa:hover{
+        cursor: pointer;
+    }
+
+    .searchInput {
+        width: 75%;
+        height: 2.5rem;
+        padding: 0 1rem; 
+        border-radius: 2rem;
+        border: none;
+        transition: transform 0.1s ease-in-out;
+    }
+    
+    ::placeholder {
+    color: #a1a1a1;
+    }
+    
+    /* hide the placeholder text on focus */
+    :focus::placeholder {
+    text-indent: -999px
+    }
+    
+    .searchInput:focus {
+    outline: none;
+    }
+
+    .container_task_done{
+        background-color: #00E5A3;
+    }
+      
+</style>
+<body>
+    <div class="navbar-container">
+        <div class="row">
+            <div class="col12">
+                <div class="navitems" style="padding-left: 10px; padding-right: 10px; padding-top: 5px;">
+                    <div class="row">
+                        <div class="col-4" id="brand_name">
+                            <h4>ToDo App</h4>
+                        </div>
+                        <div class="col-8">
+                            <div class="logout_btn float-end">
+                                <a href="/logout/" id="logout_btn"><i class="fa fa-sign-out" aria-hidden="true">Log Out</i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container" id="list_container">
+        <div class="row">
+            <div class="col-12">
+                <input class="searchInput" type="text" id="search_text" placeholder="Search in Your TODO's">
+                <button type="button" onclick="searchTodos()" title="Search Todo List" class="btn btn-outline-primary" style="border-radius: 50px;">
+                    <i class="fa fa-search" aria-hidden="true"></i>
+                </button>
+                <button type="button" onclick="clearSearch()" title="Clear Search" class="btn btn-outline-danger" style="border-radius: 50px;">
+                    <i class="fa fa-times" aria-hidden="true"></i>
+                </button>
+                <button type="button" title="Add New Task" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#todoAddModal">
+                    <i class="fa fa-plus" title="Search" aria-hidden="true"></i> Add Task
+                </button>
+            </div>
+        </div>
+        <br>
+        <div class="container" id="tasks_container">
+            {% for task in tasks %}
+                <div {% if task.completed %} class="container task_container container_task_done" {% else %} class="container task_container" {% endif %}>
+                    <div class="row">
+                        <div class="col-1">
+                            <img src="{% static task.category %}" alt="" width="40px" height="40px">
+                        </div>
+                        <div class="col-2">
+                            {{ task.title }}
+                        </div>
+                        <div class="col-5">
+                            <p>{{ task.task_date }}</p>
+                        </div>
+                        <div class="col-4">
+                            <div class="user_action_icons float-end">
+                                <div class="row">
+                                    <div class="col-4">
+                                        <i class="fa fa-eye" title="View" aria-hidden="true" onclick="openTodoModalView('{{ task.id }}')"></i>
+                                    </div>
+                                    <div class="col-4">
+                                        <i class="fa fa-pencil" style="color: teal;" title="Edit" aria-hidden="true"  onclick="openTodoModalEditView('{{ task.id }}')"></i>
+                                    </div>
+                                    <div class="col-4">
+                                        <i class="fa fa-trash" style="color: tomato;" title="Delete" aria-hidden="true" onclick="openTodoModalDeleteView('{{ task.id }}')"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            {% if task.completed %}
+                                <span><i class="fa fa-bookmark" aria-hidden="true"></i> Done</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- View Modal -->
+    <div class="modal fade" id="taskViewModal" tabindex="-1" aria-labelledby="#taskViewModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="taskViewModalLabel">ToDo Overview</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body", id="taskViewModalBody">
+                    
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Modal -->
+    <div class="modal fade" id="todoDeleteModal" tabindex="-1" aria-labelledby="todoDeleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="todoDeleteModalLabel">Confirm Delete</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="todoDeleteModalBody">
+                
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <a href="#" id="delete_modal_btn" type="button" class="btn btn-danger">Delete</a>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <!-- Add Task Modal -->
+    <div class="modal fade" id="todoAddModal" tabindex="-1" aria-labelledby="todoAddModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content">
+                <form action="/task-create/" method="post">
+                    <div class="modal-header">
+                        <h4 class="modal-title" id="todoAddModalLabel">Add New ToDo</h4>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body" id="todoAddModalBody">
+                            {% csrf_token %}
+                            <div class="container-fluid">
+                                <div class="row">
+                                    <div class="col-12 col-sm-4">
+                                        <label for="id_title" class="form-label">Title</label>
+                                        <input type="text" class="form-control" id="id_title" name="title" placeholder="ToDo Title" required>
+                                    </div>
+                                    <div class="col-12 col-sm-4">
+                                        <label for="id_category" class="form-label">Category</label>
+                                        <select class="form-select" id="id_category" aria-label="Choose ToDo Category.!" name="category" required>
+                                            <option selected>Open this select menu</option>
+                                            <option value="food">Food</option>
+                                            <option value="entertainment">Entertainment</option>
+                                            <option value="fitness">Fitness</option>
+                                            <option value="others">Others</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-12 col-sm-4">
+                                        <label for="id_date" class="form-label">Date & Time</label>
+                                        <div class="input-group mb-3" id="todo_datetime_picker">
+                                            <input type="text" class="form-control" id="id_date" name="task_date" placeholder="Select Date and Time">
+                                            <span
+                                                class="input-group-text"
+                                                data-td-target="#todo_datetime_picker"
+                                                data-td-toggle="datetimepicker"
+                                                >
+                                                <i class="fa fa-calendar"></i>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-12">
+                                        <label for="id_description" class="form-label">Description</label>
+                                        <div class="input-group">
+                                            <textarea class="form-control" name="description" id="id_description" style="height: 100px" required></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Add Todo</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Task Modal -->
+    <div class="modal fade" id="todoEditModal" tabindex="-1" aria-labelledby="todoEditModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content">
+                <form action="/task-update/" method="post" id="id_todo_update_form">
+                    <div class="modal-header">
+                        <h4 class="modal-title" id="todoEditModalLabel">Add New ToDo</h4>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body" id="todoEditModalBody">
+                            {% csrf_token %}
+                            <div class="container-fluid">
+                                <div class="row">
+                                    <div class="col-12 col-sm-4">
+                                        <label for="id_edit_title" class="form-label">Title</label>
+                                        <input type="text" class="form-control" id="id_edit_title" name="title" placeholder="ToDo Title" required>
+                                    </div>
+                                    <div class="col-12 col-sm-4">
+                                        <label for="id_edit_category" class="form-label">Category</label>
+                                        <select class="form-select" id="id_edit_category" aria-label="Choose ToDo Category.!" name="category" required>
+                                            <option selected>Open this select menu</option>
+                                            <option value="food">Food</option>
+                                            <option value="entertainment">Entertainment</option>
+                                            <option value="fitness">Fitness</option>
+                                            <option value="others">Others</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-12 col-sm-4">
+                                        <label for="id_edit_date" class="form-label">Date & Time</label>
+                                        <div class="input-group mb-3" id="todo_edit_datetime_picker">
+                                            <input type="text" class="form-control" id="id_edit_date" name="task_date" placeholder="Select Date and Time">
+                                            <span
+                                                class="input-group-text"
+                                                data-td-target="#todo_edit_datetime_picker"
+                                                data-td-toggle="datetimepicker"
+                                                >
+                                                <i class="fa fa-calendar"></i>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-12">
+                                        <label for="id_edit_description" class="form-label">Description</label>
+                                        <div class="input-group">
+                                            <textarea class="form-control" name="description" id="id_edit_description" style="height: 100px" required></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <br>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" value="" onchange="changeCheckboxValue(this)" name="completed" id="id_task_completed">
+                                            <label class="form-check-label" for="id_task_completed">
+                                              Task Completed ..?
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Update Todo</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+{% sweetify %}  
+</body>
+
+<script src="{% static 'moment.js' %}"></script>
+<script>
+    let csrf_token = '{% csrf_token %}';
+    var tasks = JSON.parse('{{ serialized_tasks|escapejs }}');
+    let taskViewModal = new bootstrap.Modal(document.getElementById('taskViewModal'), {});
+    let taskDeleteModal = new bootstrap.Modal(document.getElementById('todoDeleteModal'), {});
+    let taskEditModal = new bootstrap.Modal(document.getElementById('todoEditModal'), {});
+    const dateTimePicker = new tempusDominus.TempusDominus(document.getElementById('todo_datetime_picker'), {
+        display: {
+            icons: {
+                type: 'icons',
+                time: 'fa fa-clock-o',
+                date: 'fa fa-calendar',
+                up: 'fa fa-arrow-up',
+                down: 'fa fa-arrow-down',
+                previous: 'fa fa-chevron-left',
+                next: 'fa fa-chevron-right',
+                today: 'fa fa-calendar-check',
+                clear: 'fa fa-trash',
+                close: 'fa fa-xmark'
+            }
+        },
+        localization:{
+            dateFormats: {
+                L: 'yyyy-MM-dd hh:mm:ss'
+            },
+            ordinal: (n) => n,
+            format: 'L'
+        }
+      });
+    
+      dateTimePicker.dates.formatInput = function(date) {
+        if(date != "" && date != undefined)
+            return moment(date).format('YYYY-MM-DD HH:MM');
+        
+            return ""
+      };
+
+    const editDateTimePicker = new tempusDominus.TempusDominus(document.getElementById('todo_edit_datetime_picker'), {
+        display: {
+            icons: {
+                type: 'icons',
+                time: 'fa fa-clock-o',
+                date: 'fa fa-calendar',
+                up: 'fa fa-arrow-up',
+                down: 'fa fa-arrow-down',
+                previous: 'fa fa-chevron-left',
+                next: 'fa fa-chevron-right',
+                today: 'fa fa-calendar-check',
+                clear: 'fa fa-trash',
+                close: 'fa fa-xmark'
+            }
+        },
+        localization:{
+            dateFormats: {
+                L: 'yyyy-MM-dd hh:mm:ss'
+            },
+            ordinal: (n) => n,
+            format: 'L'
+        },
+        useCurrent: false,
+      });
+    
+      editDateTimePicker.dates.formatInput = function(date) {
+        if(date != "" && date != undefined)
+            return moment(date).format('YYYY-MM-DD HH:MM');
+        
+            return ""
+      };
+
+    function searchTodos(){
+        let search_text = (document.getElementById("search_text").value).toLowerCase();
+
+        let todo_lists = document.getElementById("tasks_container").children;
+
+        for(let index=0; index < todo_lists.length; index++){
+            let todo = todo_lists[index];
+
+            let todo_title = (todo.children[0].children[1].textContent).toLowerCase();
+            
+            if(todo_title.includes(search_text) || search_text == "" || search_text == null){
+                todo.style.display = "block";
+            }else{
+                todo.style.display = "none";
+            }
+        }
+    }
+
+    function clearSearch(){
+        document.getElementById("search_text").value = "";
+        searchTodos();
+    }
+
+    function openTodoModalView(task_id){
+        console.log("Task Id: "+task_id);
+        let task = tasks[task_id];
+        let modal_body_content = `
+            <p>Title: ${task['title']}</p>
+            <p>Description: ${task['description']}</p>
+            <p>Date: ${task['task_date']}</p>
+            <p>Category: ${task['category']}</p>
+            <p>Completed: ${task['completed']}</p>
+            <p>Created On: ${task['created']}</p>
+        `;
+        
+        document.getElementById('taskViewModalBody').innerHTML = modal_body_content;
+        taskViewModal.show();
+        
+    }
+
+    function openTodoModalDeleteView(task_id){
+        document.getElementById('todoDeleteModalBody').innerHTML = `
+            <p>Are you sure you want to delete: ${tasks[task_id]['title']} ..?
+        `;
+
+        document.getElementById('delete_modal_btn').href = `/task-delete/${task_id}/`;
+
+        taskDeleteModal.show();
+    }
+
+    function openTodoModalEditView(task_id){
+        let task = tasks[task_id]
+        document.getElementById('id_todo_update_form').action = `/task-update/${task_id}/`;
+        document.getElementById('id_edit_title').value = task['title'];
+        document.getElementById('id_edit_description').value = task['description'];
+        document.getElementById('id_edit_date').value = task['task_date'] == 'None'? null : task['task_date'];
+        document.getElementById('id_edit_category').value = task['category'];
+        document.getElementById('id_task_completed').checked = task['completed'];
+        taskEditModal.show();
+    }
+
+    function changeCheckboxValue(obj){
+        obj.value = obj.checked;
+    }
+</script>
+</html>

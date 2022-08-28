@@ -1,0 +1,94 @@
+{% load static %}
+{% load django_bootstrap5 %}
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+{% bootstrap_messages %}
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Tangerine">
+    <script src="https://use.fontawesome.com/37cc65afcd.js"></script>
+    <title>ToDo | Task List</title>
+</head>
+
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Monoton&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+    body{
+        background-image: url("{% static 'todo_bg2.jpg' %}");
+        background-size: cover;
+        background-repeat: no-repeat;
+        font-family: 'Roboto', sans-serif !important;
+        overflow-x: hidden;
+        overflow-y: hidden;
+        font-size: 16px;
+    }
+
+    #login_container{
+        margin-top: 4%;
+        background: white;
+        min-height: 70vh;
+        width: 60%;
+        background: linear-gradient( to right bottom, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.3) );
+        border-radius: 7px;
+        backdrop-filter: blur(0.4rem);
+        /* display: flex; */
+        padding: 30px;
+    }
+
+    .navbar-container{
+        margin: 10px;
+        border-radius: 7px;
+        background: white;
+        background: linear-gradient( to right bottom, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.3) );
+        backdrop-filter: blur(0.4rem);
+    }
+
+    #brand_name{
+        font-family: 'Monoton', cursive;
+        text-shadow: 4px 4px 4px #aaa;
+        font-weight: bold;
+    }
+
+    #tasks_container{
+        padding-left: 10%;
+        padding-right: 10%;
+        height: 50vh;
+        overflow-y: auto;
+    }
+</style>
+<body>
+    <div class="navbar-container">
+        <div class="row">
+            <div class="col12">
+                <div class="navitems" style="padding-left: 10px; padding-right: 10px; padding-top: 5px;">
+                    <div class="row">
+                        <div class="col-4" id="brand_name">
+                            <h4>ToDo App</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container" id="login_container">
+        <h3 style="text-align: center;">Hi There, Register to Login...</h3>
+        <br>
+        <p>
+            you can use demo account for testing in Login Page. <br>
+            username: <code>demo</code> <br>
+            password: <code>demopassword</code> <br>
+        </p>
+
+        <form action="" method="post">
+            {% csrf_token %}
+            <table>
+                {%bootstrap_form form %}
+            </table>
+            {% bootstrap_button button_type="submit" content="Register" %}
+            <p>you already have an account ? <a href="{% url 'login' %}">Login Now</a></p>
+        </form>
+    </div>
+</body>
+

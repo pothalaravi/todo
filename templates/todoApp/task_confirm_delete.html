@@ -1,0 +1,28 @@
+{% load django_bootstrap5 %}
+
+{# Load CSS and JavaScript #}
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+
+{# Display django.contrib.messages as Bootstrap alerts #}
+{% bootstrap_messages %}
+<head>
+    <style>
+        body{
+            background-image: url("https://uploads-ssl.webflow.com/5a9423a3f702750001758d4f/60eee628c6468d7ea4a3374d_%233FE0D0%20(1).png");
+            background-size: cover;
+        }
+        form{
+            color:red;
+        }
+        
+    </style>
+</head>
+
+<form action="" method="post">
+    {% csrf_token %}
+    <p> Are you sure you wanna delete this task -{{task}}</p>
+    {% bootstrap_button button_type="submit" content="Yes,delete" %}
+
+    <a href ="{% url 'task' %}">NO,Go Back!!</a>
+</form>
