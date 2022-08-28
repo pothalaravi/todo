@@ -16,7 +16,7 @@
 - [DJango Bootstrap 5](https://github.com/zostera/django-bootstrap5)
 - HTML, CSS, JavaScript
 - SqLite DB
-- 
+
 ## Installation
 
 Dillinger requires [Node.js](https://nodejs.org/) v10+ to run.
